@@ -5,7 +5,6 @@ function booksController(Book) {
             res.status(400);
             return res.send('Title is required');
         }
-
         book.save();
         res.status(201);
         return res.json(book);
@@ -19,7 +18,13 @@ function booksController(Book) {
             if (err) {
                 return res.send(err);
             }
-            return res.json(books);
+            const returnBooks = books.map((book) =>{
+                const newBook = book.toJSON();
+                newBook.links = {};
+                newBook.links.self = `http://${req.headers.host}/api/books/${book._id}`;
+                return newBook;
+            });
+            return res.json(returnBooks);
         });
     }
     return { post, get };
